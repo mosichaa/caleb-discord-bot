@@ -1,6 +1,6 @@
 # Caleb the Bot
 
-I started this project because I want to create a fun way to organise and promote self-love. I believe that it's easier to love yourself through someone else's eyes than through oneself sometimes, so until then, I hope this bot can be a helpful tool to help people reach there. (and also for giggles because why not, life is short HAVE FUN)
+I started this project because I want to create a fun way to organise and promote self-love. I believe that it's easier to love yourself through someone else's eyes than through one's own sometimes, so until then, I hope this bot can be a helpful tool to help people reach there. (and also for giggles because why not, life is short HAVE FUN)
 
 🚨Caleb is currently configured for my personal Discord server and isn't designed as a general-purpose bot yet. 🚨
 
@@ -50,7 +50,7 @@ Active personal project. More features and refactoring are planned.
 1. check the requirement.txt
 2. create **.env** file and **replace your_discord_bot_token_here** in with your own bot token
 3. replace **your_reminder_channel_id** and **your_general_chat_channel_id** in **bot.py** with your channel ids
-4. due to copyrights reason I can't provide you the sounds, so you have to place your own audio files in sound/ using the filenames expected by the bot. (study_time.mp3, sleep.mp3, Caleb_SleepAid.mp3)
+4. due to copyrights reason I can't provide you the sounds, so you have to place your own audio files in sounds/ using the filenames expected by the bot. (study_time.mp3, sleep.mp3, Caleb_SleepAid.mp3)
 
 ## Keywords
 | keyword(s) | response(s) |
