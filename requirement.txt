@@ -1,0 +1,8 @@
+# python packages required for this project (Caleb the Bot)
+
+- discord.py
+- python-dotenv
+
+# external download needed
+
+- FFmpeg
