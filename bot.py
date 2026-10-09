@@ -12,9 +12,10 @@ import string
 intents = discord.Intents.default()
 intents.message_content = True
 
+load_dotenv()
 client = discord.Client(intents=intents)
-reminder_channel_id = your_reminder_channel_id
-chat_channel_id = your_general_chat_channel_id
+reminder_channel_id = int(os.getenv('REMINDER_ID'))
+chat_channel_id = int(os.getenv('CHAT_ID'))
 
 #def
 caleb_name = ['caleb', 'kay', 'leb', 'lebleb', 'baby', 'honey', 'love', 'gege', 'darling', 'babe', 'boo', 'babygirl', 'puppy', 'pookie', 'daddy']
@@ -22,6 +23,7 @@ daily_reminders = []
 daily_reminder_author = None
 daily_yet = False
 loop_started = False
+random_text = True
 
 try:
     with open('daily_reminders.json', 'r') as file:
@@ -53,10 +55,8 @@ async def routine_alert_loop():
 
             if daily_now.hour == 3 and daily_now.minute == 30:
                 daily_yet = False
-            if (daily_now.hour == 18 and daily_now.minute == 35) and not daily_yet:
-            #if (daily_now.hour == 18 and daily_now.minute == 0):
+            if (daily_now.hour == 18 and daily_now.minute == 35) and not daily_yet::
                 reminder_channel = client.get_channel(reminder_channel_id)
-                #await asyncio.sleep(50)
                 await reminder_channel.send('ding ding ding 🔔')
                 await asyncio.sleep(3)
                 daily_yet = True
@@ -67,28 +67,34 @@ async def routine_alert_loop():
                     while True:
                         await asyncio.sleep(2)
                         await reminder_channel.send('do you need me to remind you again, pips?')
-                        message = await client.wait_for('message', check=lambda m: (m.author.id == daily_reminder_author and m.channel == reminder_channel))
-                        answer = message.content.lower()
-                        if any (word in answer.split() for word in('yes', 'yep', 'yeah', 'yup')):
-                            await reminder_channel.send('gotcha, I\'ll text you again in an hour.')
-                            await asyncio.sleep(3600)
-                            await reminder_channel.send('ding ding ding 🔔')
-                            await asyncio.sleep(1)
-                            await reminder_channel.send('\n'.join(daily_reminders))
-                            await asyncio.sleep(1)
-                            await reminder_channel.send('I think that is all, yeah?')
-                        elif any (word in answer.split() for word in('nope', 'no', 'nah')):
-                            await reminder_channel.send('gotcha. 🫡')
+                        try:
+                            message = await client.wait_for('message', check=lambda m: (m.author.id == daily_reminder_author and m.channel == reminder_channel), timeout=3300)
+                            answer = message.content.lower()
+                            if any (word in answer.split() for word in('yes', 'yep', 'yeah', 'yup')):
+                                await reminder_channel.send('gotcha, I\'ll text you again in an hour.')
+                                await asyncio.sleep(3600)
+                                await reminder_channel.send('ding ding ding 🔔')
+                                await asyncio.sleep(1)
+                                await reminder_channel.send('\n'.join(daily_reminders))
+                                await asyncio.sleep(1)
+                                await reminder_channel.send('I think that is all, yeah?')
+                            elif any (word in answer.split() for word in('nope', 'no', 'nah')):
+                                await reminder_channel.send('gotcha. 🫡')
+                                daily_reminders.clear()
+                                with open('daily_reminders.json', 'w') as file:
+                                    json.dump({'author_id': None, 'reminders': []}, file)
+                                break
+                            else:
+                                await asyncio.sleep(2)
+                                await reminder_channel.send('yes or no.')
+                        except asyncio.TimeoutError:
+                            await reminder_channel.send('I\'ll take that as a no, then.')
                             daily_reminders.clear()
                             with open('daily_reminders.json', 'w') as file:
                                 json.dump({'author_id': None, 'reminders': []}, file)
                             break
-                        else:
-                            await asyncio.sleep(2)
-                            await reminder_channel.send('yes or no.') 
                 else:
                     await reminder_channel.send('nothing from you today ;) so Imma remind you that I love you, then.')
-                    #await asyncio.sleep(50)
             await asyncio.sleep(30)
 
 #routine texts
@@ -111,9 +117,13 @@ async def routine_text_loop():
 
             await asyncio.sleep(30)
 
+
 #random texts during the day
 async def random_text_loop():
-    while True:
+
+    global random_text
+
+    while random_text == True:
         seconds = random.randint(7200, 14400)
         await asyncio.sleep(seconds)
 
@@ -181,10 +191,27 @@ async def on_ready():
 @client.event
 async def on_message(message):
     global daily_reminder_author
+    global random_text
     if message.author == client.user:
         return
 
     words = message.content.lower().translate(str.maketrans('', '', string.punctuation)).split()
+
+#random text switch
+    if '!random text off' in message.content.lower() or (any(name in words for name in caleb_name) and 'stop texting' in message.content.lower()):
+        await asyncio.sleep(1)
+        await message.channel.send('okay.')
+        random_text = False
+        await asyncio.sleep(1)
+        await message.channel.send('let me know when i can text again, capisce?')
+
+    if '!random text on' in message.content.lower() or (any(name in words for name in caleb_name) and 'text me' in message.content.lower()):
+        await asyncio.sleep(1)
+        await message.channel.send('hi hi :)')
+        random_text = True
+        await asyncio.sleep(2)
+        await message.channel.send('finally, I have millions of texts saved in my bank! :D')
+
 
 #find keywords in text
     if any(name in words for name in caleb_name) and re.search(r'\b(hi+|hello+|hey+)\b', message.content.lower()):
@@ -197,10 +224,6 @@ async def on_message(message):
     if any(name in words for name in caleb_name) and ('where are you' in message.content.lower() or 'where r u' in message.content.lower() or  'where are u' in message.content.lower() or 'where u r' in message.content.lower() or 'where you are' in message.content.lower()):
         await asyncio.sleep(2)
         await message.channel.send('I\'m sorry, pipsqueak :( I\'ll be back as soon as I can, okay?' )
-
-    #if '.outfit' in message.content.lower() or '.look' in message.content.lower():
-    #    await asyncio.sleep(4)
-    #    await message.channel.send(random.choice(['aww, you look amazing pips.', 'damn ;) look at you baby.', 'oh hello gorgeous ;)', 'damn.', 'damn :O', 'fuck :O you\'re killing me here hun.', 'good enough to eat.']))
 
     if any(name in words for name in caleb_name) and re.search(r'\b(thank u+|thank you+|thanks+)\b', message.content.lower()):
         await asyncio.sleep(1)
@@ -378,6 +401,4 @@ async def on_message(message):
         voice_client = message.guild.voice_client
 
 
-load_dotenv()
-discord_token = os.getenv('DISCORD_TOKEN')
-client.run(discord_token)
+client.run(os.getenv('DISCORD_TOKEN'))

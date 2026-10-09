@@ -15,6 +15,12 @@ Active personal project. More features and refactoring are planned.
 - Ability to join voice channel and play study/sleep ambience sounds
 - Responsive to keywords
 
+## Version History
+### 1.1.0
+- Moved channel IDs from main file to .env file
+- Added time limit for how long Caleb waits for an answer to the repeat-reminder question.
+- Added command to enable or disable Caleb's random messages throughout the day.
+
 ## Commands
 
 | command(s) | action |
@@ -26,6 +32,8 @@ Active personal project. More features and refactoring are planned.
 | (caleb_name) & can't sleep / (caleb_name) & cant sleep / (caleb names) & count planes / !count planes | join voice channel and play sleep aid |
 | (caleb_name) & join call / (caleb_name) & wanna call / (caleb_name) & want to call / !call | join voice channel |
 | !leave | force leave voice channel |
+| !random text off / (caleb_name) & stop texting | disable Caleb's random messages |
+| !random text on / (caleb_name) & text me | enable Caleb's random messages |
 
 ## List of Caleb's names/nicknames (caleb_name)
 

@@ -1,3 +1,7 @@
 .env
+sounds/Caleb_10min_Sleep.mp3
+sounds/Caleb_SleepAid.mp3
+sounds/Sleep.mp3
+sounds/study_time.mp3
 __pycache__/
 *.pyc
