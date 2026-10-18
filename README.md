@@ -20,6 +20,7 @@ Active personal project. More features and refactoring are planned.
 - Moved channel IDs from main file to .env file
 - Added time limit for how long Caleb waits for an answer to the repeat-reminder question.
 - Added command to enable or disable Caleb's random messages throughout the day.
+- Added ability to remove reminder.
 
 ## Commands
 

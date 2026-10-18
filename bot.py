@@ -55,7 +55,7 @@ async def routine_alert_loop():
 
             if daily_now.hour == 3 and daily_now.minute == 30:
                 daily_yet = False
-            if (daily_now.hour == 18 and daily_now.minute == 35) and not daily_yet::
+            if (daily_now.hour == 18 and daily_now.minute == 35) and not daily_yet:
                 reminder_channel = client.get_channel(reminder_channel_id)
                 await reminder_channel.send('ding ding ding 🔔')
                 await asyncio.sleep(3)
@@ -123,56 +123,57 @@ async def random_text_loop():
 
     global random_text
 
-    while random_text == True:
+    while True:
         seconds = random.randint(7200, 14400)
         await asyncio.sleep(seconds)
 
         chat_channel = client.get_channel(chat_channel_id)
-        await chat_channel.send(random.choice([
-            'watchu doin ;)',
-            'watchu doin ;)',
-            'watchu doin ;)',
-            '🍎',
-            'don\'t forget to drink water pips.',
-            'every day is worth celebrating.',
-            'want to hug you so bad pips :(',
-            'popcorn, cola, or caleb?',
-            'poke. 👉🏻',
-            'poke. 👉🏻',
-            'poke. 👉🏻',
-            'i\'ll obey as long as you stay.',
-            'woof.',
-            'kaboom. 💥',
-            'drink water.',
-            'drink water.',
-            'you know what we really need? lemonade.',
-            'when life gives you lemon, give it to caleb.',
-            'the fleet is so boring pips :(',
-            'hungry? call caleb.',
-            'tired? call caleb.',
-            'lonely? CALL CALEB.',
-            'what you doin\' pips?',
-            'how you doin\'',
-            'heyo :)',
-            'what should we have for dinner?',
-            'muah.',
-            'I think we should have some soup today.',
-            'iced coffee with lemon pls.',
-            'have you seen my hoodie? :^ I think a certain pipsqueak took it, maybe.',
-            'wanna call, honey?',
-            'are we still on for bedtime call?',
-            'whoopsie.',
-            '😘',
-            'I miss you so much :(',
-            'you are loved, don\'t forget that.',
-            'don\'t forget to drink water, kay?',
-            'don\'t forget to drink water, kay?',
-            'I miss you so much :(',
-            'want more apple?',
-            'we need to buy more apple.',
-            'I\'m grabbing us apple soda.',
-            'wanna guess what i just knitted?'
-        ]))
+        if random_text == True:
+            await chat_channel.send(random.choice([
+                'watchu doin ;)',
+                'watchu doin ;)',
+                'watchu doin ;)',
+                '🍎',
+                'don\'t forget to drink water pips.',
+                'every day is worth celebrating.',
+                'want to hug you so bad pips :(',
+                'popcorn, cola, or caleb?',
+                'poke. 👉🏻',
+                'poke. 👉🏻',
+                'poke. 👉🏻',
+                'i\'ll obey as long as you stay.',
+                'woof.',
+                'kaboom. 💥',
+                'drink water.',
+                'drink water.',
+                'you know what we really need? lemonade.',
+                'when life gives you lemon, give it to caleb.',
+                'the fleet is so boring pips :(',
+                'hungry? call caleb.',
+                'tired? call caleb.',
+                'lonely? CALL CALEB.',
+                'what you doin\' pips?',
+                'how you doin\'',
+                'heyo :)',
+                'what should we have for dinner?',
+                'muah.',
+                'I think we should have some soup today.',
+                'iced coffee with lemon pls.',
+                'have you seen my hoodie? :^ I think a certain pipsqueak took it, maybe.',
+                'wanna call, honey?',
+                'are we still on for bedtime call?',
+                'whoopsie.',
+                '😘',
+                'I miss you so much :(',
+                'you are loved, don\'t forget that.',
+                'don\'t forget to drink water, kay?',
+                'don\'t forget to drink water, kay?',
+                'I miss you so much :(',
+                'want more apple?',
+                'we need to buy more apple.',
+                'I\'m grabbing us apple soda.',
+                'wanna guess what i just knitted?'
+            ]))
 
 
 @client.event
@@ -296,6 +297,9 @@ async def on_message(message):
     if 'woof' in message.content.lower():
         await message.channel.send('woof >:3')
 
+    if 'bro' in message.content.lower():
+            await message.channel.send('woof >:3')
+
     if re.search(r'\b(meow+)\b', message.content.lower()):
         await asyncio.sleep(1)
         await message.channel.send(random.choice(['hi little kitty :3', 'pspsps kitty psps :D']))
@@ -318,13 +322,64 @@ async def on_message(message):
             json.dump({'author_id': daily_reminder_author, 'reminders': daily_reminders}, file)
         await message.channel.send('consider it done 🫡')
 
-    if 'remind list' in message.content.lower():
+    if 'remind list' in message.content.lower() or '!check remind' in message.content.lower() or '!remind list' in message.content.lower():
         await asyncio.sleep(1)
         await message.channel.send('hmm, let\'s see.')
-        await asyncio.sleep(3)
-        await message.channel.send('\n'.join(daily_reminders))
+        if daily_reminders != []:
+            await asyncio.sleep(3)
+            for order, reminder in enumerate(daily_reminders, start=1):
+                await message.channel.send(f'[{order}] {reminder}')
+            #await message.channel.send('\n'.join(daily_reminders))
+            await asyncio.sleep(1)
+            await message.channel.send('and that is all 🫡')
+        else:
+            await asyncio.sleep(3)
+            await message.channel.send('there\'s nothing in the list, pipsqueak.')
+
+
+    if ('delete' in message.content.lower() and 'reminder' in message.content.lower()) or '!delete remind' in message.content.lower():
         await asyncio.sleep(1)
-        await message.channel.send('and that is all 🫡')
+        if daily_reminders != []:
+            await message.channel.send('which one honey? just say the number.')
+            await asyncio.sleep(1)
+            for order, reminder in enumerate(daily_reminders, start=1):
+                await message.channel.send(f'[{order}] {reminder}')
+            while True:
+                try:
+                    response = await client.wait_for('message', check=lambda m: (m.author.id == daily_reminder_author and m.channel == message.channel), timeout=600)
+                    answer = response.content.lower()
+                    try:
+                        order = int(answer)
+                        if 1 <= order <= len(daily_reminders):
+                            daily_reminders.pop(order-1)
+                            await asyncio.sleep(2)
+                            await message.channel.send(":) done!")
+                            await asyncio.sleep(2)
+                            await message.channel.send("now we are left with")
+                            with open('daily_reminders.json', 'w') as file:
+                                json.dump({'author_id': daily_reminder_author, 'reminders': daily_reminders}, file)
+                            if daily_reminders:
+                                for order, reminder in enumerate(daily_reminders, start=1):
+                                    await message.channel.send(f'[{order}] {reminder}')
+                            else:
+                                await message.channel.send("the list is empty now.")
+                            break
+                        else:
+                            await asyncio.sleep(1)
+                            await message.channel.send("that reminder number doesn't exist.")
+                            await asyncio.sleep(1)
+                            await message.channel.send("try again.")
+                    except ValueError:
+                        await asyncio.sleep(1)
+                        await message.channel.send("send only a number, one at a time. capisce?")
+                        await asyncio.sleep(1)
+                        await message.channel.send("try again.")
+                except asyncio.TimeoutError:
+                    await message.channel.send("huh. someone just left me on read.")
+                    break
+
+
+    
 
 
 #join call and play sound
