@@ -28,6 +28,7 @@ Active personal project. More features and refactoring are planned.
 |---|---|
 | !remind study for exam | add "study for exam" to the scheduled reminder |
 | remind list | check what is on the scheduled reminder list |
+| delete & reminder / !delete remind | remove a specific reminder of the reminder list |
 | (caleb_name) & study together / (caleb_name) & work together / !study / !work | join voice channel and play study ambience sound |
 | (caleb_name) & sleep together / (caleb_name) & nap together / !sleep | join voice channel and play sleep ambience sound |
 | (caleb_name) & can't sleep / (caleb_name) & cant sleep / (caleb names) & count planes / !count planes | join voice channel and play sleep aid |
